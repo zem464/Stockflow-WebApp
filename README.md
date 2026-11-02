@@ -1,10 +1,27 @@
-# StockFlow
+# Stockpile - Inventory Dashboard
+
+**Stockpile** is a dedicated web app designed to streamline inventory tracking small businesses. It offers real-time visibility into daily piece counts, itemized inventory and historical sales trends.
+
+---
+
+## Features
+
+- **Real-time Metrics:** Instant tracking of today's pieces sold, total profit, monthly volume, and net revenue[cite: 3, 4].
+- **Inventory Management:** Itemized tracking for popular skewer types (Isaw Manok, Isaw Baboy, Longganisa, Adidas, etc.) with real-time progress indicators[cite: 4].
+- **Restock Alerts:** Automatic visual alerts when key inventory items drop below minimum thresholds[cite: 4].
+- **Monthly Analytics:** Interactive bar charts tracking daily performance throughout November 2026 alongside top-selling item rankings and month-over-month growth insights[cite: 4].
+
+---
+
+## Tech Stack
 
 This repository is a local copy of a Base44 app created with `base44 eject`.
 
 ## Live App
 
 [Open the app](https://stock-flow-0a6878b5.base44.app)
+
+## Getting Started
 
 ## Prerequisites
 
