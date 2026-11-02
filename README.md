@@ -1,8 +1,14 @@
 # Base44 Project
 
-Use this repository to run and edit the app locally, then publish changes back through Base44.
+This repository is a local copy of a Base44 app created with `base44 eject`.
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+`base44 eject` created a **separate Base44 project with its own app ID**. This copy does **not** sync with the original Base44 app, and pushing to this repository does **not** update Base44 automatically — you deploy changes explicitly with the Base44 CLI (see [Deploy Your Changes](#deploy-your-changes)).
+
+> Note: `eject` copies your entity schemas but not your existing data, so the app's database starts empty.
+
+## Live App
+
+[Open the app]https://(stock-flow-0a6878b5.base44.app)
 
 ## Prerequisites
 
@@ -11,7 +17,7 @@ Any change pushed to the repo will also be reflected in the Base44 Builder.
 3. Install dependencies: `npm install`.
 4. Install the Base44 CLI: `npm install -g base44@latest`.
 
-See the [Base44 CLI docs](https://docs.base44.com/developers/references/cli/get-started/overview) if you want to run Base44 commands directly.
+See the [Base44 CLI docs](https://docs.base44.com/developers/references/cli/commands/introduction) if you want to run Base44 commands directly.
 
 ## Run Locally
 
@@ -35,6 +41,8 @@ For example, when the Base44 project config includes a `serveCommand`, `base44 d
 
 In a Base44 project this lives in `base44/config.jsonc`.
 
+Local backend data is kept in memory and is cleared when the dev server stops.
+
 ## Run Only The Frontend
 
 If you only want to work on the frontend against the hosted Base44 backend, run:
@@ -50,19 +58,46 @@ Open the local URL printed by Vite.
 For frontend-only development, create or update `.env.local` in the project root:
 
 ```bash
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=https://your-app.base44.app
+VITE_BASE44_APP_ID=your_ejected_app_id
+VITE_BASE44_APP_BASE_URL=https://your-ejected-app.base44.app
 ```
 
-`VITE_BASE44_APP_ID` identifies the Base44 app.
+`VITE_BASE44_APP_ID` identifies the ejected Base44 app (its own app ID — not the original app's).
 
 `VITE_BASE44_APP_BASE_URL` tells the Base44 Vite plugin where to send local `/api` requests. Point it at your deployed Base44 app URL when you want the local frontend to use the hosted backend.
 
 When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows.
 
-## Publish Your Changes
+## Commit & Push Your Changes
 
-After pushing your changes to git, open the Base44 dashboard and publish the app:
+This repository is your own version history. Save each milestone with:
+
+```bash
+git add .
+git commit -m "Describe what changed"
+git push
+```
+
+Pushing records the change in GitHub. It does not, by itself, update Base44 — deploy when you want the change live (next section).
+
+## Deploy Your Changes
+
+Build the frontend, then deploy the project's resources to the ejected Base44 app:
+
+```bash
+base44 build
+base44 deploy
+```
+
+Or do both in one step:
+
+```bash
+base44 deploy --build
+```
+
+`base44 build` compiles the frontend with the ejected app's ID injected. `base44 deploy` pushes entities, functions, and the site to your ejected Base44 project.
+
+To open the Base44 dashboard for this project:
 
 ```bash
 base44 dashboard open
