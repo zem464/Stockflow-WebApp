@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "role": {
+      "type": "string",
+      "description": "The role of the user in the app",
+      "enum": [
+        "admin",
+        "user"
+      ]
+    },
+    "passcode": {
+      "type": "string",
+      "description": "Passcode used to unlock menu price editing"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Display name configured in Settings"
+    }
+  },
+  "required": [
+    "role"
+  ],
+  "name": "User",
+  "type": "object"
+}
