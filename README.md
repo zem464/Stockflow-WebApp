@@ -1,14 +1,10 @@
-# Base44 Project
+# StockFlow
 
 This repository is a local copy of a Base44 app created with `base44 eject`.
 
-`base44 eject` created a **separate Base44 project with its own app ID**. This copy does **not** sync with the original Base44 app, and pushing to this repository does **not** update Base44 automatically — you deploy changes explicitly with the Base44 CLI (see [Deploy Your Changes](#deploy-your-changes)).
-
-> Note: `eject` copies your entity schemas but not your existing data, so the app's database starts empty.
-
 ## Live App
 
-[Open the app]https://(stock-flow-0a6878b5.base44.app)
+[Open the app](https://stock-flow-0a6878b5.base44.app)
 
 ## Prerequisites
 
@@ -53,11 +49,11 @@ npm run dev
 
 Open the local URL printed by Vite.
 
-## Use The Hosted Backend
+## Use The Hosted Backend (Optional)
 
-For frontend-only development, create or update `.env.local` in the project root:
+Only needed for frontend-only development. Create or update `.env.local` in the project root:
 
-```bash
+```env
 VITE_BASE44_APP_ID=your_ejected_app_id
 VITE_BASE44_APP_BASE_URL=https://your-ejected-app.base44.app
 ```
@@ -66,7 +62,7 @@ VITE_BASE44_APP_BASE_URL=https://your-ejected-app.base44.app
 
 `VITE_BASE44_APP_BASE_URL` tells the Base44 Vite plugin where to send local `/api` requests. Point it at your deployed Base44 app URL when you want the local frontend to use the hosted backend.
 
-When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows.
+When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows. Don't commit `.env.local`.
 
 ## Commit & Push Your Changes
 
