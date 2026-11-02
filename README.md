@@ -6,10 +6,9 @@
 
 ## Features
 
-- **Real-time Metrics:** Instant tracking of today's pieces sold, total profit, monthly volume, and net revenue[cite: 3, 4].
-- **Inventory Management:** Itemized tracking for popular skewer types (Isaw Manok, Isaw Baboy, Longganisa, Adidas, etc.) with real-time progress indicators[cite: 4].
-- **Restock Alerts:** Automatic visual alerts when key inventory items drop below minimum thresholds[cite: 4].
-- **Monthly Analytics:** Interactive bar charts tracking daily performance throughout November 2026 alongside top-selling item rankings and month-over-month growth insights[cite: 4].
+- **Real-time Metrics:** Instant tracking of today's pieces sold, total profit, monthly volume, and net revenue.
+- **Inventory Management:** Itemized tracking for items with real-time progress indicators.
+- **Restock Alerts:** Automatic visual alerts when key inventory items drop below minimum thresholds.
 
 ---
 
