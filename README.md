@@ -1,6 +1,6 @@
-# Stockpile - Inventory Dashboard
+# Stockflow - Inventory Dashboard
 
-**Stockpile** is a dedicated web app designed to streamline inventory tracking small businesses. It offers real-time visibility into daily piece counts, itemized inventory and historical sales trends.
+**Stockflow** is a dedicated web app designed to streamline inventory tracking small businesses. It offers real-time visibility into daily piece counts, itemized inventory and historical sales trends.
 
 ---
 
