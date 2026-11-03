@@ -11,11 +11,16 @@ import SalesLog from '@/components/tinda/SalesLog';
 import InventoryForm from '@/components/inventory/InventoryForm';
 
 const peso = (n) => `₱${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const addDays = (d, n) => {
+  const dt = new Date(`${d}T00:00:00`);
+  dt.setDate(dt.getDate() + n);
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+};
 
 export default function Inventory() {
   const [items, setItems] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState('entry');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [refreshKey, setRefreshKey] = useState(0);
   const [search, setSearch] = useState('');
@@ -24,13 +29,9 @@ export default function Inventory() {
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
-    const [itemList, catList] = await Promise.all([
-      base44.entities.InventoryItem.list('-updated_date'),
-      base44.entities.Category.list(),
-    ]);
+    const itemList = await base44.entities.InventoryItem.list('-updated_date');
     itemList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     setItems(itemList);
-    setCategories(catList);
     setLoading(false);
   };
 
@@ -70,7 +71,7 @@ export default function Inventory() {
       {loading ? (
         <div className="text-center py-16 text-muted-foreground">Loading…</div>
       ) : (
-        <Tabs defaultValue="entry">
+        <Tabs value={tab} onValueChange={setTab}>
           <TabsList>
             <TabsTrigger value="entry">Daily Entry</TabsTrigger>
             <TabsTrigger value="log">Sales Log</TabsTrigger>
@@ -82,11 +83,21 @@ export default function Inventory() {
               <label className="text-sm font-medium">Date</label>
               <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="sm:w-48" />
             </div>
-            <DailyEntry key={date} items={items} date={date} onSaved={() => setRefreshKey((k) => k + 1)} />
+            <DailyEntry
+              key={date}
+              items={items}
+              date={date}
+              onSaved={() => setRefreshKey((k) => k + 1)}
+              onAdvanceDate={() => setDate(addDays(date, 1))}
+            />
           </TabsContent>
 
           <TabsContent value="log" className="mt-4">
-            <SalesLog key={refreshKey} items={items} />
+            <SalesLog
+              key={refreshKey}
+              items={items}
+              onEditDate={(d) => { setDate(d); setTab('entry'); }}
+            />
           </TabsContent>
 
           <TabsContent value="items" className="space-y-4 mt-4">
@@ -140,7 +151,7 @@ export default function Inventory() {
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit item' : 'Add item'}</DialogTitle>
           </DialogHeader>
-          <InventoryForm item={editing} categories={categories} onSubmit={handleSave} onCancel={() => setDialogOpen(false)} saving={saving} />
+          <InventoryForm item={editing} onSubmit={handleSave} onCancel={() => setDialogOpen(false)} saving={saving} />
         </DialogContent>
       </Dialog>
     </div>
