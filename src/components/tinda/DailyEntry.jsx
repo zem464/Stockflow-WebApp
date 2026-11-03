@@ -7,7 +7,7 @@ import { Save, Moon } from 'lucide-react';
 
 const peso = (n) => `₱${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-export default function DailyEntry({ items, date, onSaved }) {
+export default function DailyEntry({ items, date, onSaved, onAdvanceDate }) {
   const [entries, setEntries] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -43,7 +43,9 @@ export default function DailyEntry({ items, date, onSaved }) {
           amount: Number(entries[it.name]) * (it.menu_price || 0),
         }));
       if (toCreate.length) await base44.entities.SalesRecord.bulkCreate(toCreate);
+      setEntries({});
       onSaved?.();
+      onAdvanceDate?.();
     } finally {
       setSaving(false);
     }
@@ -57,6 +59,7 @@ export default function DailyEntry({ items, date, onSaved }) {
       await base44.entities.DayStatus.create({ date, no_tinda: true });
       setEntries({});
       onSaved?.();
+      onAdvanceDate?.();
     } finally {
       setSaving(false);
     }
