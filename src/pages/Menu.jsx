@@ -103,16 +103,10 @@ export default function Menu() {
                 <h2 className="font-heading text-xl font-semibold mb-4 pb-2 border-b border-border">{catName}</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {catItems.map((item) => {
-                    const inStock = (item.quantity || 0) > 0;
                     return (
                       <Card key={item.id} className="p-4 flex items-center justify-between gap-4">
                         <div className="min-w-0">
                           <div className="font-medium truncate">{item.name}</div>
-                          {item.quantity != null && (
-                            <span className={`text-xs ${inStock ? 'text-muted-foreground' : 'text-brand'}`}>
-                              {inStock ? 'Available' : 'Out of stock'}
-                            </span>
-                          )}
                         </div>
                         {unlocked ? (
                           <div className="flex items-center gap-2 shrink-0">
