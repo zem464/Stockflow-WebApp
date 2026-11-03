@@ -70,31 +70,35 @@ export default function DailyEntry({ items, date, onSaved, onAdvanceDate }) {
   return (
     <div className="space-y-4">
       <Card className="p-4">
-        <div className="grid grid-cols-12 gap-2 px-2 pb-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <div className="hidden sm:grid grid-cols-12 gap-2 px-2 pb-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
           <div className="col-span-5">Item</div>
           <div className="col-span-2 text-right">Price</div>
           <div className="col-span-3 text-right">Qty sold</div>
           <div className="col-span-2 text-right">Amount</div>
         </div>
-        <div className="space-y-1">
+        <div className="space-y-2 sm:space-y-1">
           {items.map((it) => {
             const qty = Number(entries[it.name]) || 0;
             const amt = qty * (it.menu_price || 0);
             return (
-              <div key={it.id} className="grid grid-cols-12 gap-2 items-center px-2 py-2 rounded-lg hover:bg-muted/40">
-                <div className="col-span-5 font-medium truncate">{it.name}</div>
-                <div className="col-span-2 text-right text-sm text-muted-foreground">{peso(it.menu_price)}</div>
-                <div className="col-span-3 flex justify-end">
+              <div key={it.id} className="grid grid-cols-2 gap-2 items-center rounded-xl border border-border p-3 sm:grid-cols-12 sm:gap-2 sm:rounded-lg sm:border-0 sm:p-2 sm:px-2 hover:bg-muted/40">
+                <div className="col-span-2 min-w-0 flex items-baseline justify-between gap-2 sm:col-span-5 sm:block">
+                  <span className="font-medium truncate">{it.name}</span>
+                  <span className="text-xs text-muted-foreground shrink-0 sm:hidden">{peso(it.menu_price)}</span>
+                </div>
+                <div className="hidden sm:block sm:col-span-2 text-right text-sm text-muted-foreground">{peso(it.menu_price)}</div>
+                <div className="flex flex-col gap-1 sm:col-span-3 sm:items-end">
+                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground sm:hidden">Qty sold</span>
                   <Input
                     type="number"
                     min="0"
                     value={entries[it.name] ?? ''}
                     onChange={(e) => setQty(it.name, e.target.value)}
-                    className="w-24 text-right"
+                    className="h-11 w-full text-right text-base sm:h-9 sm:w-24 sm:text-sm"
                     placeholder="0"
                   />
                 </div>
-                <div className="col-span-2 text-right font-medium">{peso(amt)}</div>
+                <div className="text-right font-medium sm:col-span-2">{peso(amt)}</div>
               </div>
             );
           })}
@@ -111,11 +115,11 @@ export default function DailyEntry({ items, date, onSaved, onAdvanceDate }) {
         </div>
       </Card>
 
-      <div className="flex gap-2 justify-end">
-        <Button variant="outline" onClick={handleNoTinda} disabled={saving} className="gap-2">
+      <div className="flex flex-col-reverse sm:flex-row gap-2 justify-end">
+        <Button variant="outline" onClick={handleNoTinda} disabled={saving} className="gap-2 w-full sm:w-auto">
           <Moon className="w-4 h-4" /> No Tinda
         </Button>
-        <Button onClick={handleSave} disabled={saving} className="gap-2">
+        <Button onClick={handleSave} disabled={saving} className="gap-2 w-full sm:w-auto">
           <Save className="w-4 h-4" /> {saving ? 'Saving…' : 'Save day'}
         </Button>
       </div>
