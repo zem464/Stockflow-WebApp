@@ -86,6 +86,14 @@ export default function AppLayout() {
             {label}
           </NavLink>
         ))}
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex-1 flex flex-col items-center gap-1 py-2.5 text-xs font-medium text-muted-foreground"
+        >
+          <LogOut className="w-5 h-5" />
+          Logout
+        </button>
       </nav>
     </div>
   );
