@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, BookOpen, LogOut, Boxes, Settings as SettingsIcon } from 'lucide-react';
+import { LayoutDashboard, Package, BookOpen, Boxes, LogOut, Settings as SettingsIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 
@@ -21,6 +21,7 @@ export default function AppLayout() {
 
   const handleLogout = async () => {
     await base44.auth.logout();
+    navigate('/login');
   };
 
   return (
@@ -30,7 +31,7 @@ export default function AppLayout() {
           <div className="grid place-items-center w-9 h-9 rounded-xl bg-brand text-white">
             <Boxes className="w-5 h-5" />
           </div>
-          <span className="font-heading font-semibold text-lg tracking-tight">Stockpile</span>
+          <span className="font-heading font-semibold text-lg tracking-tight">StockFlow</span>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
           {navItems.map(({ to, label, icon: Icon, end }) => (
