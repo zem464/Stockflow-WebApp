@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Receipt, Pencil, Trash2, Download, ArrowDown } from 'lucide-react';
+import { Receipt, Pencil, Trash2, Download, ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const peso = (n) => `₱${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 const monthLabel = (key) => new Date(`${key}-01T00:00:00`).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+const today = new Date();
+const currentMonthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+const SLIDE_GAP = 16;
 
 export default function SalesLog({ items, onEditDate }) {
   const [records, setRecords] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState('date');
+  const [activeMonth, setActiveMonth] = useState(currentMonthKey);
+  const containerRef = useRef(null);
 
   const load = async () => {
     const [recs, stats] = await Promise.all([
@@ -25,8 +30,6 @@ export default function SalesLog({ items, onEditDate }) {
   };
 
   useEffect(() => { load(); }, []);
-
-  if (loading) return <div className="text-center py-10 text-muted-foreground">Loading…</div>;
 
   const byDate = {};
   records.forEach((r) => {
@@ -47,6 +50,25 @@ export default function SalesLog({ items, onEditDate }) {
 
   const days = Object.values(byDate);
 
+  const months = {};
+  days.forEach((d) => {
+    const key = d.date.slice(0, 7);
+    (months[key] = months[key] || []).push(d);
+  });
+  if (!months[currentMonthKey]) months[currentMonthKey] = [];
+  const monthKeys = Object.keys(months).sort();
+  const activeIndex = Math.max(0, monthKeys.indexOf(activeMonth));
+
+  useEffect(() => {
+    if (loading) return;
+    const c = containerRef.current;
+    if (!c) return;
+    const idx = Math.max(0, monthKeys.indexOf(currentMonthKey));
+    c.scrollTo({ left: idx * (c.clientWidth + SLIDE_GAP) });
+  }, [loading]);
+
+  if (loading) return <div className="text-center py-10 text-muted-foreground">Loading…</div>;
+
   if (days.length === 0) {
     return (
       <Card className="p-12 text-center">
@@ -56,18 +78,25 @@ export default function SalesLog({ items, onEditDate }) {
     );
   }
 
-  const months = {};
-  days.forEach((d) => {
-    const key = d.date.slice(0, 7);
-    (months[key] = months[key] || []).push(d);
-  });
-  const monthKeys = Object.keys(months).sort();
-
   const sortDays = (list) => [...list].sort((a, b) => {
     if (sort === 'pcs') return b.pcs - a.pcs || a.date.localeCompare(b.date);
     if (sort === 'profit') return b.profit - a.profit || a.date.localeCompare(b.date);
     return a.date.localeCompare(b.date);
   });
+
+  const goTo = (idx) => {
+    const c = containerRef.current;
+    if (!c || idx < 0 || idx >= monthKeys.length) return;
+    c.scrollTo({ left: idx * (c.clientWidth + SLIDE_GAP), behavior: 'smooth' });
+    setActiveMonth(monthKeys[idx]);
+  };
+
+  const handleScroll = () => {
+    const c = containerRef.current;
+    if (!c) return;
+    const idx = Math.min(monthKeys.length - 1, Math.max(0, Math.round(c.scrollLeft / (c.clientWidth + SLIDE_GAP))));
+    if (monthKeys[idx] && monthKeys[idx] !== activeMonth) setActiveMonth(monthKeys[idx]);
+  };
 
   const handleDelete = async (day) => {
     if (!window.confirm(`Delete all sales for ${fmtDate(day.date)}?`)) return;
@@ -110,18 +139,31 @@ export default function SalesLog({ items, onEditDate }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5">
+          <Button variant="outline" size="icon" onClick={() => goTo(activeIndex - 1)} disabled={activeIndex <= 0} title="Previous month">
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
+          <Button variant="outline" size="icon" onClick={() => goTo(activeIndex + 1)} disabled={activeIndex >= monthKeys.length - 1} title="Next month">
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
         <Button variant="outline" size="sm" className="gap-2" onClick={exportCsv}>
           <Download className="w-4 h-4" /> Export CSV
         </Button>
       </div>
 
+      <div
+        ref={containerRef}
+        onScroll={handleScroll}
+        className="flex gap-4 overflow-x-auto snap-x snap-mandatory overscroll-x-contain pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
       {monthKeys.map((key) => {
-        const monthDays = sortDays(months[key]);
+        const monthDays = sortDays(months[key] || []);
         const monthPcs = monthDays.reduce((s, d) => s + d.pcs, 0);
         const monthProfit = monthDays.reduce((s, d) => s + d.profit, 0);
         return (
-          <Card key={key} className="overflow-hidden">
+          <Card key={key} className="w-full shrink-0 snap-start overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-muted/60 border-b border-border">
               <h3 className="font-heading font-semibold">{monthLabel(key)}</h3>
               <span className="text-xs sm:text-sm text-muted-foreground">{monthPcs} pcs · {peso(monthProfit)}</span>
@@ -146,6 +188,13 @@ export default function SalesLog({ items, onEditDate }) {
                   </tr>
                 </thead>
                 <tbody>
+                  {monthDays.length === 0 && (
+                    <tr>
+                      <td colSpan={items.length + 4} className="px-3 py-10 text-center text-muted-foreground">
+                        No sales recorded this month.
+                      </td>
+                    </tr>
+                  )}
                   {monthDays.map((d, idx) => (
                     <tr key={d.date} className={idx % 2 ? 'bg-muted/40' : 'bg-card'}>
                       <td className="px-3 py-2 font-medium whitespace-nowrap">
@@ -187,6 +236,7 @@ export default function SalesLog({ items, onEditDate }) {
           </Card>
         );
       })}
+      </div>
     </div>
   );
 }
